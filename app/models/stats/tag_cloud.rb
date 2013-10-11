@@ -2,20 +2,10 @@
 #  http://www.juixe.com/techknow/index.php/2006/07/15/acts-as-taggable-tag-cloud/
 class TagCloud
 
-  attr_reader :user, :min, :divisor
+  attr_reader :user, :divisor
   def initialize(user, cut_off = nil)
     @user = user
     @cut_off = cut_off
-  end
-
-  def compute
-    max, @min = 0, 0
-    tags.each { |t|
-      max = [t.count.to_i, max].max
-      @min = [t.count.to_i, @min].min
-    }
-
-    @divisor = ((max - @min) / levels) + 1
   end
 
   def tags
@@ -28,6 +18,14 @@ class TagCloud
     end
 
     @tags
+  end
+
+  def min
+    0
+  end
+
+  def divisor
+    @divisor ||= ((max - min) / levels) + 1
   end
 
   private
@@ -52,4 +50,13 @@ class TagCloud
   def levels
     10
   end
+
+  def tag_counts
+   @tag_counts ||= tags.map {|t| t.count.to_i}
+  end
+
+  def max
+    tag_counts.max
+  end
+
 end
